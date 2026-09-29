@@ -1,0 +1,35 @@
+﻿@model Aquarium_Manager.ViewModels.Tank.TankCreateViewModel
+<h1>Добавяне на аквариум</h1>
+
+<form asp-action="Create" method="post">
+
+    <label>Име на аквариум:</label>
+    <input asp-for="Name" />
+    <span asp-validation-for="Name"></span>
+
+    <br />
+    <br />
+
+    <label>Обем:</label>
+    <input asp-for="Volume" />
+    <span asp-validation-for="Volume"></span>
+
+    <br />
+    <br />
+
+    <label>Местоположение:</label>
+    <input asp-for="Location" />
+    <span asp-validation-for="Location"></span>
+
+    <br />
+    <br />
+
+    <button type="submit">Запази</button>
+
+</form>
+
+<a asp-action="Index">Назад към списъка</a>
+
+<br />
+
+<a href="/Tank/Index">Покажи всички аквариуми</a>

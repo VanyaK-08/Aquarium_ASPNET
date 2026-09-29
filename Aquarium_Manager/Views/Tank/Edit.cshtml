@@ -1,0 +1,36 @@
+﻿@model Aquarium_Manager.ViewModels.Tank.TankEditViewModel
+
+<h1>Редактиране на аквариум</h1>
+
+<form asp-action="Edit" method="post">
+
+    <input asp-for="Id" type="hidden" />
+
+    <label>Име:</label>
+    <input asp-for="Name" />
+    <span asp-validation-for="Name"></span>
+
+    <br />
+    <br />
+
+    <label>Обем:</label>
+    <input asp-for="Volume" />
+    <span asp-validation-for="Volume"></span>
+
+    <br />
+    <br />
+
+    <label>Местоположение:</label>
+    <input asp-for="Location" />
+    <span asp-validation-for="Location"></span>
+
+    <br />
+    <br />
+
+    <button type="submit">Запази промените</button>
+
+</form>
+
+<br />
+
+<a asp-action="Index">Назад към списъка</a>
