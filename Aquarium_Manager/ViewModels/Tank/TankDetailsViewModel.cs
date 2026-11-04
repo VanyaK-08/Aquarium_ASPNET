@@ -9,6 +9,7 @@
         public double Volume { get; set; }
 
         public string Location { get; set; }
- 
-    }
+
+        public List<string> ExhibitNames { get; set; }
+        }
 }

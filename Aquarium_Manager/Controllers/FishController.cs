@@ -1,6 +1,7 @@
 ﻿using Aquarium_Data;
 using Aquarium_Data.Entities;
 using Aquarium_Manager.ViewModels.Fish;
+using Core_Aquarium.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,46 +10,37 @@ namespace Aquarium_Manager.Controllers
 {
     public class FishController : Controller
     {
-        private readonly AquariumDB context;
+        private readonly IFish fishService;
+        private readonly ITank tankService;
 
-        public FishController(AquariumDB context)
+        public FishController(IFish fishService, ITank tankService)
         {
-            this.context = context;
+            this.fishService = fishService;
+            this.tankService = tankService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var fish = await context.Fish
-                .Include(f => f.Tank)
-                .ToListAsync();
+            var fishList = await fishService.GetAllFishAsync();
 
-            var model = new List<FishIndexViewModel>();
-
-            foreach (var fishItem in fish)
+            var model = fishList.Select(f => new FishIndexViewModel
             {
-                model.Add(new FishIndexViewModel
-                {
-                    Id = fishItem.Id,
-                    Name = fishItem.Name,
-                    Species = fishItem.Species,
-                    Age = fishItem.Age,
-                    TankId = fishItem.TankId
-                });
-            }
+                Id = f.Id,
+                Name = f.Name,
+                Species = f.Species,
+                Age = f.Age,
+                TankId = f.TankId
+            }).ToList();
 
             return View(model);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var fish = await context.Fish
-                .Include(f => f.Tank)
-                .FirstOrDefaultAsync(f => f.Id == id);
+            var fish = await fishService.GetFishDetailsAsync(id);
 
             if (fish == null)
-            {
                 return NotFound();
-            }
 
             var model = new FishDetailsViewModel
             {
@@ -64,49 +56,46 @@ namespace Aquarium_Manager.Controllers
 
         public async Task<IActionResult> Create()
         {
-            ViewBag.Tanks = new SelectList(
-                await context.Tanks.ToListAsync(),
-                "Id",
-                "Name");
+            await LoadTanksAsync();
 
-            return View();
+            return View(new FishCreateViewModel());
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(FishCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            await LoadTanksAsync();
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var tanks = await tankService.GetAllTanksAsync();
+
+            if (!tanks.Any(t => t.Id == model.TankId))
             {
-                var fish = new Fish
-                {
-                    Name = model.Name,
-                    Species = model.Species,
-                    Age = model.Age,
-                    TankId = model.TankId.Value
-                };
 
-                context.Fish.Add(fish);
-                await context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                return View(model);
             }
 
-            ViewBag.Tanks = new SelectList(
-                await context.Tanks.ToListAsync(),
-                "Id",
-                "Name");
+            var fish = new Fish
+            {
+                Name = model.Name,
+                Species = model.Species,
+                Age = model.Age,
+                TankId = (int)model.TankId
+            };
 
-            return View(model);
+            await fishService.AddFishAsync(fish);
+
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var fish = await context.Fish.FindAsync(id);
+            var fish = await fishService.GetFishByIdAsync(id);
 
             if (fish == null)
-            {
                 return NotFound();
-            }
 
             var model = new FishEditViewModel
             {
@@ -117,10 +106,7 @@ namespace Aquarium_Manager.Controllers
                 TankId = fish.TankId
             };
 
-            ViewBag.Tanks = new SelectList(
-                await context.Tanks.ToListAsync(),
-                "Id",
-                "Name");
+            await LoadTanksAsync();
 
             return View(model);
         }
@@ -129,45 +115,42 @@ namespace Aquarium_Manager.Controllers
         public async Task<IActionResult> Edit(int id, FishEditViewModel model)
         {
             if (id != model.Id)
+                return BadRequest();
+
+            await LoadTanksAsync();
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var tanks = await tankService.GetAllTanksAsync();
+
+            if (!tanks.Any(t => t.Id == model.TankId))
             {
-                return NotFound();
+                return View(model);
             }
 
-            if (ModelState.IsValid)
-            {
-                var fish = await context.Fish.FindAsync(id);
-
-                if (fish == null)
-                {
-                    return NotFound();
-                }
-
-                fish.Name = model.Name;
-                fish.Species = model.Species;
-                fish.Age = model.Age;
-                fish.TankId = model.TankId.Value;
-
-                await context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
-            }
-
-            ViewBag.Tanks = new SelectList(
-                await context.Tanks.ToListAsync(),
-                "Id",
-                "Name");
-
-            return View(model);
-        }
-
-        public async Task<IActionResult> Delete(int id)
-        {
-            var fish = await context.Fish.FindAsync(id);
+            var fish = await fishService.GetFishByIdAsync(id);
 
             if (fish == null)
-            {
                 return NotFound();
-            }
+
+            fish.Name = model.Name;
+            fish.Species = model.Species;
+            fish.Age = model.Age;
+            fish.TankId = (int)model.TankId;
+
+            await fishService.UpdateFishAsync(fish);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var fish = await fishService.GetFishByIdAsync(id);
+
+            if (fish == null)
+                return NotFound();
 
             var model = new FishDeleteViewModel
             {
@@ -183,15 +166,25 @@ namespace Aquarium_Manager.Controllers
         [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var fish = await context.Fish.FindAsync(id);
+            var fish = await fishService.GetFishByIdAsync(id);
 
-            if (fish != null)
-            {
-                context.Fish.Remove(fish);
-                await context.SaveChangesAsync();
-            }
+            if (fish == null)
+                return NotFound();
+
+            await fishService.DeleteFishAsync(id);
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task LoadTanksAsync()
+        {
+            var tanks = await tankService.GetAllTanksAsync();
+
+            ViewBag.Tanks = new SelectList(
+                tanks,
+                "Id",
+                "Name"
+            );
         }
     }
 }

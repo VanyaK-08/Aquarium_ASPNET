@@ -21,6 +21,55 @@ namespace Aquarium_Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Aquarium_Data.Entities.Exhibit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Exhibits");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "A vibrant display of coral reefs and tropical fish.",
+                            IsDeleted = false,
+                            Name = "Coral Reef Exhibit"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "A showcase of freshwater species from rivers and lakes.",
+                            IsDeleted = false,
+                            Name = "Freshwater Exhibit"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "An exploration of the mysterious deep sea creatures.",
+                            IsDeleted = false,
+                            Name = "Deep Sea Exhibit"
+                        });
+                });
+
             modelBuilder.Entity("Aquarium_Data.Entities.Fish", b =>
                 {
                     b.Property<int>("Id")
@@ -50,6 +99,32 @@ namespace Aquarium_Data.Migrations
                     b.HasIndex("TankId");
 
                     b.ToTable("Fish");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Age = 2,
+                            Name = "Clownfish",
+                            Species = "Amphiprioninae",
+                            TankId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Age = 1,
+                            Name = "Guppy",
+                            Species = "Poecilia reticulata",
+                            TankId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Age = 3,
+                            Name = "Angelfish",
+                            Species = "Pterophyllum scalare",
+                            TankId = 1
+                        });
                 });
 
             modelBuilder.Entity("Aquarium_Data.Entities.Tank", b =>
@@ -79,6 +154,64 @@ namespace Aquarium_Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tanks");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsDeleted = false,
+                            Location = "Main Hall",
+                            Name = "Tropical Tank",
+                            Volume = 100.0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsDeleted = false,
+                            Location = "Freshwater Section",
+                            Name = "Freshwater Tank",
+                            Volume = 150.0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsDeleted = false,
+                            Location = "Deep Sea Section",
+                            Name = "Deep Sea Tank",
+                            Volume = 200.0
+                        });
+                });
+
+            modelBuilder.Entity("Aquarium_Data.Entities.TanksExhibit", b =>
+                {
+                    b.Property<int>("TankId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExhibitId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TankId", "ExhibitId");
+
+                    b.HasIndex("ExhibitId");
+
+                    b.ToTable("TanksExhibits");
+
+                    b.HasData(
+                        new
+                        {
+                            TankId = 1,
+                            ExhibitId = 1
+                        },
+                        new
+                        {
+                            TankId = 2,
+                            ExhibitId = 2
+                        },
+                        new
+                        {
+                            TankId = 3,
+                            ExhibitId = 3
+                        });
                 });
 
             modelBuilder.Entity("Aquarium_Data.Entities.Fish", b =>
@@ -92,9 +225,35 @@ namespace Aquarium_Data.Migrations
                     b.Navigation("Tank");
                 });
 
+            modelBuilder.Entity("Aquarium_Data.Entities.TanksExhibit", b =>
+                {
+                    b.HasOne("Aquarium_Data.Entities.Exhibit", "Exhibit")
+                        .WithMany("TanksExhibits")
+                        .HasForeignKey("ExhibitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Aquarium_Data.Entities.Tank", "Tank")
+                        .WithMany("TanksExhibits")
+                        .HasForeignKey("TankId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exhibit");
+
+                    b.Navigation("Tank");
+                });
+
+            modelBuilder.Entity("Aquarium_Data.Entities.Exhibit", b =>
+                {
+                    b.Navigation("TanksExhibits");
+                });
+
             modelBuilder.Entity("Aquarium_Data.Entities.Tank", b =>
                 {
                     b.Navigation("Fish");
+
+                    b.Navigation("TanksExhibits");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,52 @@
+﻿@model Aquarium_Manager.ViewModels.Exhibit.ExhibitDetailsViewModel
+
+@{
+    ViewData["Title"] = "Детайли за изложбата";
+}
+
+<h1>Детайли за изложбата</h1>
+
+<div>
+    <hr />
+
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt class="col-sm-2">
+            Аквариуми
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.TankNames != null && Model.TankNames.Any())
+            {
+                <ul>
+                    @foreach (var tankName in Model.TankNames)
+                    {
+                        <li>@tankName</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span>Няма свързани аквариуми.</span>
+            }
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Редактирай</a> |
+    <a asp-action="Index">Назад към списъка</a>
+</div>
+

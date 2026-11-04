@@ -25,5 +25,6 @@ namespace Aquarium_Data.Entities
 
         public bool IsDeleted { get; set; }
         public ICollection<Fish> Fish { get; set; } = new List<Fish>();
+        public ICollection<TanksExhibit> TanksExhibits { get; set; } = new List<TanksExhibit>();
     }
 }

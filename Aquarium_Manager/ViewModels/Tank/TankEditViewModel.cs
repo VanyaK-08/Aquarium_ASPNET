@@ -17,5 +17,6 @@ namespace Aquarium_Manager.ViewModels.Tank
         [Required(ErrorMessage = "Местоположението е задължително")]
         [StringLength(100, ErrorMessage = "Местоположението може да бъде максимум 100 символа")]
         public string Location { get; set; }
-    }
+        public List<int> SelectedExhibitIds { get; set; }
+        }
 }
