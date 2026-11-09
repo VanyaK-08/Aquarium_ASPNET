@@ -19,9 +19,9 @@ namespace Aquarium_Manager.Controllers
             this.exhibitService = exhibitService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search = null, double? minVolume = null, string? sortOrder = null)
         {
-            var tanks = await tankService.GetAllTanksAsync();
+            var tanks = await tankService.GetAllTanksAsync(search, minVolume, sortOrder);
 
             var model = tanks.Select(t => new TankIndexViewModel
             {
@@ -29,8 +29,10 @@ namespace Aquarium_Manager.Controllers
                 Name = t.Name,
                 Volume = t.Volume,
                 Location = t.Location
-            }).ToList();
-
+            });
+            ViewBag.Search = search;
+            ViewBag.MinVolume = minVolume;
+            ViewBag.SortOrder = sortOrder;
             return View(model);
         }
 

@@ -9,7 +9,7 @@ namespace Core_Aquarium.Interfaces
 {
     public interface ITank
     {
-        Task<List<Tank>> GetAllTanksAsync();
+        Task<List<Tank>> GetAllTanksAsync(string? search = null, double? minVolume = null, string? sortOrder = null);
 
         Task<Tank?> GetTankByIdAsync(int id); //edit, delete
 
