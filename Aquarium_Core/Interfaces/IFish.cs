@@ -9,7 +9,7 @@ namespace Core_Aquarium.Interfaces
 {
     public interface IFish
     {
-        Task<List<Fish>> GetAllFishAsync();
+        Task<List<Fish>> GetAllFishAsync(string? search = null, int? minAge = null, string? sortOrder = null);
 
         Task<Fish?> GetFishByIdAsync(int id);
 

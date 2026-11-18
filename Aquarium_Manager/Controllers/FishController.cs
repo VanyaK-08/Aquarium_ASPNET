@@ -35,6 +35,21 @@ namespace Aquarium_Manager.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetFilteredFish(string? search, int? minAge, string? sortOrder)
+        {
+            var fishList = await fishService.GetAllFishAsync(search, minAge, sortOrder);
+            var result = fishList.Select(f => new 
+            {
+                id = f.Id,
+                name = f.Name,
+                species = f.Species,
+                age = f.Age,
+                tankId = f.TankId
+            }).ToList();
+            return Json(result);
+        }
+
         public async Task<IActionResult> Details(int id)
         {
             var fish = await fishService.GetFishDetailsAsync(id);

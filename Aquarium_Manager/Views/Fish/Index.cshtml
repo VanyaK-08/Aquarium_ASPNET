@@ -14,6 +14,42 @@
     </a>
 </p>
 
+<div class="row mb-3">
+    <div class="col-md-3">
+        <label>Fish Name</label>
+        <input type="text"
+               id="search"
+               class="form-control"
+               placeholder="Search by name..." />
+    </div>
+
+    <div class="col-md-3">
+        <label>Species</label>
+        <input type="text"
+               id="speciesFilter"
+               class="form-control"
+               placeholder="Enter species..." />
+    </div>
+
+    <div class="col-md-3">
+        <label>Sort By</label>
+        <select id="sortOrder" class="form-control">
+            <option value="name">Name A-Z</option>
+            <option value="species">Species A-Z</option>
+            <option value="age_asc">Age Ascending</option>
+            <option value="age_desc">Age Descending</option>
+        </select>
+    </div>
+
+    <div class="col-md-3 d-flex align-items-end">
+        <button type="button" id="clearFilters"
+                class="btn btn-primary">
+            Clear Filters
+        </button>
+    </div>
+
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -37,7 +73,7 @@
         </tr>
     </thead>
 
-    <tbody>
+    <tbody id="fishTable">
 
         @foreach (var fish in Model)
         {
@@ -87,3 +123,9 @@
 
     </tbody>
 </table>
+
+@section Scripts {
+    <script src="~/js/FishFilter.js"
+            asp-append-version="true">
+    </script>
+}

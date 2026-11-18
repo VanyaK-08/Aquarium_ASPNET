@@ -42,12 +42,40 @@ namespace Core_Aquarium.Services
             await context_new.SaveChangesAsync();
         }
 
-        public async Task<List<Fish>> GetAllFishAsync()
+        public async Task<List<Fish>> GetAllFishAsync(string? search = null, int? minAge = null, string? sortOrder = null)
         {
-            return await context_new.Fish
-                .Include(f => f.Tank)
-                .Where(f => !f.Tank!.IsDeleted)
-                .ToListAsync();
+            var query = context_new.Fish.Include(d => d.Tank).Where(d => true);
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(d => d.Name.Contains(search));
+            }
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(d => d.Species.Contains(search));
+            }
+            if (minAge.HasValue)
+            {
+                query = query.Where(d => d.Age >= minAge.Value);
+            }
+            switch(sortOrder)
+            {
+                case "name":
+                    query = query.OrderBy(d => d.Name);
+                    break;
+                case "species":
+                    query = query.OrderBy(d => d.Species);
+                    break;
+                case "age_asc":
+                    query = query.OrderBy(d => d.Age);
+                    break;
+                case "age_desc":
+                    query = query.OrderByDescending(d => d.Age);
+                    break;
+                default:
+                    query = query.OrderBy(d => d.Id);
+                    break;
+            }
+            return await query.ToListAsync();
         }
 
         public async Task<Fish?> GetFishByIdAsync(int id)
