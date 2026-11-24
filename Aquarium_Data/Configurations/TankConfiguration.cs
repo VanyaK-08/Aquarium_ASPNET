@@ -13,7 +13,26 @@ namespace Aquarium_Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Tank> builder)
         {
+            builder.Property(t => t.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(t => t.Volume)
+                .IsRequired();
+
+            builder.Property(t=>t.Location)
+                .HasMaxLength(100)
+                .IsRequired();
+
             builder.HasData(
+                new Tank
+                {
+                    Id = 1,
+                    Name = "Reef Tank",
+                    Volume = 120,
+                    Location = "Main Hall",
+                    IsDeleted = false
+                },
                 new Tank
                 {
                     Id = 2,

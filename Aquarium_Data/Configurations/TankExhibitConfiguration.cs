@@ -13,6 +13,17 @@ namespace Aquarium_Data.Configurations
     {
         public void Configure(EntityTypeBuilder<TanksExhibit> builder)
         {
+            builder.HasKey(te => new { te.ExhibitId, te.TankId });
+            builder.HasOne(te => te.Exhibit)
+                   .WithMany(e => e.TanksExhibits)
+                   .HasForeignKey(te=> te.ExhibitId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(te => te.Tank)
+                   .WithMany(t => t.TanksExhibits)
+                   .HasForeignKey(te => te.TankId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasData(
                 new TanksExhibit
                 {

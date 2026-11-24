@@ -25,27 +25,6 @@ namespace Aquarium_Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Fish>()
-                .HasOne(f => f.Tank)
-                .WithMany(t => t.Fish)
-                .HasForeignKey(f => f.TankId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<TanksExhibit>()
-                .HasKey(te => new { te.TankId, te.ExhibitId });
-
-            modelBuilder.Entity<TanksExhibit>()
-                .HasOne(te => te.Tank)
-                .WithMany(t => t.TanksExhibits)
-                .HasForeignKey(te => te.TankId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<TanksExhibit>()
-                .HasOne(te => te.Exhibit)
-                .WithMany(e => e.TanksExhibits)
-                .HasForeignKey(te => te.ExhibitId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             modelBuilder.ApplyConfiguration(new TankConfiguration());
             modelBuilder.ApplyConfiguration(new FishConfiguration());
             modelBuilder.ApplyConfiguration(new ExhibitConfiguration());

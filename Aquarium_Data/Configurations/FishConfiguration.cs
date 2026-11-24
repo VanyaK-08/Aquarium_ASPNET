@@ -13,6 +13,22 @@ namespace Aquarium_Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Fish> builder)
         {
+            builder.Property(f => f.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(f => f.Species)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(f => f.Age)
+                .IsRequired();
+
+            builder.HasOne(f => f.Tank)
+                .WithMany(t => t.Fish)
+                .HasForeignKey(f => f.TankId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasData(
                 new Fish
                 {

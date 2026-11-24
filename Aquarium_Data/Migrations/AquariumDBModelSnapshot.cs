@@ -103,7 +103,7 @@ namespace Aquarium_Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = 2,
                             Age = 2,
                             Name = "Clownfish",
                             Species = "Amphiprioninae",
@@ -111,7 +111,7 @@ namespace Aquarium_Data.Migrations
                         },
                         new
                         {
-                            Id = 2,
+                            Id = 3,
                             Age = 1,
                             Name = "Guppy",
                             Species = "Poecilia reticulata",
@@ -119,7 +119,7 @@ namespace Aquarium_Data.Migrations
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 4,
                             Age = 3,
                             Name = "Angelfish",
                             Species = "Pterophyllum scalare",
@@ -161,12 +161,20 @@ namespace Aquarium_Data.Migrations
                             Id = 1,
                             IsDeleted = false,
                             Location = "Main Hall",
+                            Name = "Reef Tank",
+                            Volume = 120.0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsDeleted = false,
+                            Location = "Main Hall",
                             Name = "Tropical Tank",
                             Volume = 100.0
                         },
                         new
                         {
-                            Id = 2,
+                            Id = 3,
                             IsDeleted = false,
                             Location = "Freshwater Section",
                             Name = "Freshwater Tank",
@@ -174,7 +182,7 @@ namespace Aquarium_Data.Migrations
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 4,
                             IsDeleted = false,
                             Location = "Deep Sea Section",
                             Name = "Deep Sea Tank",
@@ -184,33 +192,33 @@ namespace Aquarium_Data.Migrations
 
             modelBuilder.Entity("Aquarium_Data.Entities.TanksExhibit", b =>
                 {
-                    b.Property<int>("TankId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ExhibitId")
                         .HasColumnType("int");
 
-                    b.HasKey("TankId", "ExhibitId");
+                    b.Property<int>("TankId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("ExhibitId");
+                    b.HasKey("ExhibitId", "TankId");
+
+                    b.HasIndex("TankId");
 
                     b.ToTable("TanksExhibits");
 
                     b.HasData(
                         new
                         {
-                            TankId = 1,
-                            ExhibitId = 1
+                            ExhibitId = 1,
+                            TankId = 1
                         },
                         new
                         {
-                            TankId = 2,
-                            ExhibitId = 2
+                            ExhibitId = 2,
+                            TankId = 2
                         },
                         new
                         {
-                            TankId = 3,
-                            ExhibitId = 3
+                            ExhibitId = 3,
+                            TankId = 3
                         });
                 });
 

@@ -36,10 +36,15 @@ namespace Aquarium_Manager.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFilteredFish(string? search, int? minAge, string? sortOrder)
+        public async Task<IActionResult> GetFilteredFish(string? search, string? species, string? sortOrder)
         {
-            var fishList = await fishService.GetAllFishAsync(search, minAge, sortOrder);
-            var result = fishList.Select(f => new 
+            var fishList = await fishService.GetAllFishAsync(
+                search,
+                species,
+                sortOrder
+            );
+
+            var result = fishList.Select(f => new
             {
                 id = f.Id,
                 name = f.Name,
@@ -47,6 +52,7 @@ namespace Aquarium_Manager.Controllers
                 age = f.Age,
                 tankId = f.TankId
             }).ToList();
+
             return Json(result);
         }
 

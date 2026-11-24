@@ -26,7 +26,6 @@ namespace Aquarium_Data.Entities
 
         [ForeignKey("Tank")]
         public int TankId { get; set; }
-
         public Tank? Tank { get; set; }
     }
 }

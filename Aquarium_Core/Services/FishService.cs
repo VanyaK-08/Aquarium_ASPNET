@@ -42,39 +42,47 @@ namespace Core_Aquarium.Services
             await context_new.SaveChangesAsync();
         }
 
-        public async Task<List<Fish>> GetAllFishAsync(string? search = null, int? minAge = null, string? sortOrder = null)
+        public async Task<List<Fish>> GetAllFishAsync(string? search = null, string? species = null, string? sortOrder = null)
         {
-            var query = context_new.Fish.Include(d => d.Tank).Where(d => true);
+            var query = context_new.Fish
+                .Include(f => f.Tank)
+                .AsQueryable();
+
             if (!string.IsNullOrWhiteSpace(search))
             {
-                query = query.Where(d => d.Name.Contains(search));
+                query = query.Where(f =>
+                    f.Name.Contains(search));
             }
-            if (!string.IsNullOrWhiteSpace(search))
+
+            if (!string.IsNullOrWhiteSpace(species))
             {
-                query = query.Where(d => d.Species.Contains(search));
+                query = query.Where(f =>
+                    f.Species.Contains(species));
             }
-            if (minAge.HasValue)
-            {
-                query = query.Where(d => d.Age >= minAge.Value);
-            }
-            switch(sortOrder)
+
+            switch (sortOrder)
             {
                 case "name":
-                    query = query.OrderBy(d => d.Name);
+                    query = query.OrderBy(f => f.Name);
                     break;
+
                 case "species":
-                    query = query.OrderBy(d => d.Species);
+                    query = query.OrderBy(f => f.Species);
                     break;
+
                 case "age_asc":
-                    query = query.OrderBy(d => d.Age);
+                    query = query.OrderBy(f => f.Age);
                     break;
+
                 case "age_desc":
-                    query = query.OrderByDescending(d => d.Age);
+                    query = query.OrderByDescending(f => f.Age);
                     break;
+
                 default:
-                    query = query.OrderBy(d => d.Id);
+                    query = query.OrderBy(f => f.Id);
                     break;
             }
+
             return await query.ToListAsync();
         }
 

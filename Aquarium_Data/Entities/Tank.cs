@@ -20,6 +20,7 @@ namespace Aquarium_Data.Entities
         [Range(1, 100000)]
         public double Volume { get; set; }
 
+        [Required]
         [StringLength(100)]
         public string Location { get; set; } = string.Empty;
 
